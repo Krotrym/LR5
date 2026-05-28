@@ -1,4 +1,4 @@
-import io
+﻿import io
 import logging
 from decimal import Decimal
 from statistics import StatisticsError, mean, median, mode
@@ -258,46 +258,66 @@ def _statistics_context():
     }
 
 
+CHART_TYPES = {
+    "bar": "Столбчатая диаграмма",
+    "pie": "Круговая диаграмма",
+    "line": "Линейный график",
+}
+
+
+def _selected_chart_type(request):
+    chart_type = request.GET.get("chart", "bar")
+    return chart_type if chart_type in CHART_TYPES else "bar"
+
+
 def stats(request):
-    return render(request, "clinic/stats.html", _statistics_context())
+    context = _statistics_context()
+    context["chart_type"] = _selected_chart_type(request)
+    context["chart_types"] = CHART_TYPES
+    return render(request, "clinic/stats.html", context)
 
 
 def stats_chart(request):
-    from PIL import Image, ImageDraw, ImageFont
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
 
     context = _statistics_context()
+    chart_type = _selected_chart_type(request)
     rows = context["category_sales"]
-    labels = [row["service__category__name"] for row in rows] or ["No sales"]
+    labels = [row["service__category__name"] for row in rows] or ["Нет продаж"]
     values = [float(row["total"] or 0) for row in rows] or [0]
-    max_value = max(values) or 1
-    width, height = 900, 460
-    margin_left, margin_top, margin_bottom = 80, 60, 70
-    plot_width = width - margin_left - 40
-    plot_height = height - margin_top - margin_bottom
-    bar_gap = 12
-    bar_width = max(24, (plot_width - bar_gap * (len(values) - 1)) // len(values))
+
+    fig, ax = plt.subplots(figsize=(9, 4.8))
     colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2", "#65a30d"]
 
-    image = Image.new("RGB", (width, height), "#ffffff")
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()
-    draw.text((margin_left, 24), "Revenue by service category, BYN", fill="#172033", font=font)
-    draw.line((margin_left, margin_top, margin_left, height - margin_bottom), fill="#657086", width=2)
-    draw.line((margin_left, height - margin_bottom, width - 30, height - margin_bottom), fill="#657086", width=2)
+    if chart_type == "pie":
+        pie_values = values if any(values) else [1]
+        ax.pie(
+            pie_values,
+            labels=labels,
+            autopct="%1.1f%%" if any(values) else None,
+            startangle=90,
+            colors=colors[: len(labels)],
+        )
+        ax.set_title("Доля выручки по категориям услуг")
+    elif chart_type == "line":
+        ax.plot(labels, values, marker="o", linewidth=2.5, color="#2563eb")
+        ax.set_title("Динамика выручки по категориям услуг")
+        ax.set_ylabel("BYN")
+        ax.grid(axis="y", alpha=0.3)
+        ax.tick_params(axis="x", rotation=20)
+    else:
+        ax.bar(labels, values, color=colors[: len(labels)])
+        ax.set_title("Выручка по категориям услуг")
+        ax.set_ylabel("BYN")
+        ax.tick_params(axis="x", rotation=20)
 
-    for index, value in enumerate(values):
-        x1 = margin_left + index * (bar_width + bar_gap)
-        bar_height = int((value / max_value) * (plot_height - 20))
-        y1 = height - margin_bottom - bar_height
-        x2 = x1 + bar_width
-        y2 = height - margin_bottom
-        draw.rectangle((x1, y1, x2, y2), fill=colors[index % len(colors)])
-        draw.text((x1, y1 - 18), f"{value:.0f}", fill="#172033", font=font)
-        label = labels[index][:10]
-        draw.text((x1, height - margin_bottom + 10), label, fill="#172033", font=font)
-
+    fig.tight_layout()
     buffer = io.BytesIO()
-    image.save(buffer, format="PNG")
+    fig.savefig(buffer, format="png", dpi=120)
+    plt.close(fig)
     buffer.seek(0)
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 

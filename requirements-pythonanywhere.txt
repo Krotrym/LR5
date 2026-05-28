@@ -3,3 +3,4 @@ Pillow>=12.0
 requests>=2.34
 whitenoise[brotli]>=6.9
 dj-database-url>=3.0
+matplotlib>=3.10
