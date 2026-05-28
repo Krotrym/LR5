@@ -1,0 +1,15 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Покупка услуг | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section form-section">
+    <h1>Покупка услуг</h1>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button primary" type="submit">Создать заказ</button>
+        <a class="button" href="{% url 'service_list' %}">Отмена</a>
+    </form>
+</section>
+{% endblock %}

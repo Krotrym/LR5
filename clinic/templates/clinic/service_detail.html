@@ -1,0 +1,33 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}{{ service.name }} | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section readable">
+    <p class="eyebrow">{{ service.category.name }}</p>
+    <h1>{{ service.name }}</h1>
+    <p>{{ service.description }}</p>
+    <dl class="details">
+        <dt>Стоимость</dt>
+        <dd>{{ service.price }} BYN</dd>
+        <dt>Длительность</dt>
+        <dd>{{ service.duration_minutes }} минут</dd>
+        <dt>Сохранено UTC</dt>
+        <dd>{{ service.created_at_utc|date:"d/m/Y H:i" }}</dd>
+        <dt>Сохранено в {{ server_timezone }}</dt>
+        <dd>{{ service.created_at_local|date:"d/m/Y H:i" }}</dd>
+    </dl>
+    <div class="actions">
+        {% if user.is_authenticated %}
+            <a class="button primary" href="{% url 'order_create' %}">Купить услугу</a>
+            <a class="button" href="{% url 'appointment_create' %}">Записаться</a>
+        {% else %}
+            <a class="button primary" href="{% url 'login' %}">Войти для покупки</a>
+        {% endif %}
+        {% if user.is_staff or user.is_superuser %}
+            <a class="button" href="{% url 'service_update' service.pk %}">Редактировать</a>
+            <a class="button danger" href="{% url 'service_delete' service.pk %}">Удалить</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

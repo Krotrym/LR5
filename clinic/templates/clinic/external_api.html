@@ -1,0 +1,24 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Внешние API | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Внешние API</h1>
+    <div class="grid cards">
+        <article class="card">
+            <p class="eyebrow">GitHub API</p>
+            <h2>Django repository</h2>
+            <p>Stars: <strong>{{ github_stars }}</strong></p>
+            <p>Forks: <strong>{{ github_forks }}</strong></p>
+            <p>Updated: {{ github_updated }}</p>
+        </article>
+        <article class="card">
+            <p class="eyebrow">Open-Meteo Air Quality API</p>
+            <h2>Качество воздуха</h2>
+            <p>Минск, PM10: <strong>{{ pm10 }}</strong></p>
+            <p>Минск, PM2.5: <strong>{{ pm25 }}</strong></p>
+        </article>
+    </div>
+</section>
+{% endblock %}

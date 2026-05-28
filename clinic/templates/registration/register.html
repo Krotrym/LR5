@@ -1,0 +1,15 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Регистрация | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section form-section">
+    <h1>Регистрация клиента</h1>
+    <form method="post" class="form-card" data-registration-form>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button primary" type="submit">Зарегистрироваться</button>
+        <a class="button" href="{% url 'login' %}">Уже есть аккаунт</a>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Личный кабинет | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Личный кабинет</h1>
+    {% if customer %}
+        <div class="row-card">
+            <div>
+                <h2>{{ customer.full_name }}</h2>
+                <p>{{ customer.phone }} | {{ customer.address }}</p>
+                <p>Дата рождения: {{ customer.birth_date|date:"d/m/Y" }}</p>
+            </div>
+            <div class="actions">
+                <a class="button primary" href="{% url 'appointment_create' %}">Записаться</a>
+                <a class="button" href="{% url 'order_create' %}">Купить услуги</a>
+            </div>
+        </div>
+
+        <h2>Планируемые посещения</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Дата</th><th>Питомец</th><th>Врач</th><th>Причина</th><th>Статус</th></tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.planned_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ appointment.pet.name }}</td>
+                            <td>{{ appointment.doctor.full_name }}</td>
+                            <td>{{ appointment.reason }}</td>
+                            <td>{{ appointment.get_status_display }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5">Записей пока нет.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Покупки</h2>
+        <div class="grid cards">
+            {% for order in orders %}
+                <article class="card">
+                    <p class="eyebrow">Заказ #{{ order.pk }} | {{ order.get_status_display }}</p>
+                    <h3>{{ order.pet.name }} - {{ order.doctor.full_name }}</h3>
+                    <p>{{ order.visit_at|date:"d/m/Y H:i" }}</p>
+                    <ul>
+                        {% for item in order.items.all %}
+                            <li>{{ item.service.name }} x {{ item.quantity }} = {{ item.line_total }} BYN</li>
+                        {% endfor %}
+                    </ul>
+                    <strong>Итого: {{ order.total }} BYN</strong>
+                </article>
+            {% empty %}
+                <p>Покупок пока нет.</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>У этой учетной записи нет клиентского профиля. Для сотрудников доступны служебные разделы через навигацию и админ-панель.</p>
+    {% endif %}
+</section>
+{% endblock %}

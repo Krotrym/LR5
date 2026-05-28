@@ -1,0 +1,23 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Контакты | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Контакты</h1>
+    <div class="grid cards">
+        {% for employee in employees %}
+            <article class="card person-card">
+                <img src="{{ employee.photo_url }}" alt="{{ employee.full_name }}">
+                <h2>{{ employee.full_name }}</h2>
+                <p class="eyebrow">{{ employee.position }}</p>
+                <p>{{ employee.work_description }}</p>
+                <p><a href="tel:{{ employee.phone }}">{{ employee.phone }}</a></p>
+                <p><a href="mailto:{{ employee.email }}">{{ employee.email }}</a></p>
+            </article>
+        {% empty %}
+            <p>Контакты сотрудников пока не заполнены.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Словарь | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Словарь терминов и понятий</h1>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Термин</th>
+                    <th>Определение</th>
+                    <th>Дата добавления</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for term in terms %}
+                    <tr>
+                        <td><strong>{{ term.term }}</strong></td>
+                        <td>{{ term.definition }}</td>
+                        <td>{{ term.added_at|date:"d/m/Y" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3">Термины пока не добавлены.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

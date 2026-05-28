@@ -1,0 +1,40 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Посещения | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="section-head">
+        <h1>Планируемые посещения</h1>
+        <a class="button primary" href="{% url 'appointment_create' %}">Записаться</a>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Питомец</th>
+                    <th>Врач</th>
+                    <th>Причина</th>
+                    <th>Статус</th>
+                    <th>UTC / локально</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.planned_at|date:"d/m/Y H:i" }}</td>
+                        <td>{{ appointment.pet.name }} ({{ appointment.pet.owner.full_name }})</td>
+                        <td>{{ appointment.doctor.full_name }}</td>
+                        <td>{{ appointment.reason }}</td>
+                        <td>{{ appointment.get_status_display }}</td>
+                        <td>{{ appointment.created_at_utc|date:"d/m/Y H:i" }} / {{ appointment.created_at_local|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">Посещений пока нет.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Услуги | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="section-head">
+        <h1>Услуги клиники</h1>
+        {% if user.is_staff or user.is_superuser %}
+            <a class="button primary" href="{% url 'service_create' %}">Добавить услугу</a>
+        {% endif %}
+    </div>
+
+    <div class="toolbar" data-service-filter>
+        <label>
+            Поиск
+            <input type="search" id="serviceSearch" placeholder="Название или описание">
+        </label>
+        <label>
+            Категория
+            <select id="categoryFilter">
+                <option value="">Все категории</option>
+                {% for category in categories %}
+                    <option value="{{ category.name|lower }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Сортировка
+            <select id="sortSelect">
+                <option value="name">По названию</option>
+                <option value="price-asc">Цена по возрастанию</option>
+                <option value="price-desc">Цена по убыванию</option>
+                <option value="duration">Длительность</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="grid cards" id="serviceGrid">
+        {% for service in services %}
+            <article class="card service-card"
+                     data-name="{{ service.name|lower }}"
+                     data-description="{{ service.description|lower }}"
+                     data-category="{{ service.category.name|lower }}"
+                     data-price="{{ service.price }}"
+                     data-duration="{{ service.duration_minutes }}">
+                <p class="eyebrow">{{ service.category.name }}</p>
+                <h2><a href="{% url 'service_detail' service.pk %}">{{ service.name }}</a></h2>
+                <p>{{ service.description }}</p>
+                <div class="meta-line">
+                    <strong>{{ service.price }} BYN</strong>
+                    <span>{{ service.duration_minutes }} мин.</span>
+                </div>
+                {% if user.is_staff or user.is_superuser %}
+                    <div class="actions">
+                        <a class="button" href="{% url 'service_update' service.pk %}">Редактировать</a>
+                        <a class="button danger" href="{% url 'service_delete' service.pk %}">Удалить</a>
+                    </div>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p>Услуги пока не добавлены.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

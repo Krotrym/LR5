@@ -1,0 +1,15 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Новый отзыв | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section form-section">
+    <h1>Добавить отзыв</h1>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button primary" type="submit">Сохранить</button>
+        <a class="button" href="{% url 'reviews' %}">Отмена</a>
+    </form>
+</section>
+{% endblock %}

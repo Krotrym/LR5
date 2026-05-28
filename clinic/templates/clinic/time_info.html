@@ -1,0 +1,18 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Календарь и время | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section readable">
+    <h1>Календарь и время</h1>
+    <dl class="details">
+        <dt>Таймзона пользователя/сервера</dt>
+        <dd>{{ server_timezone }}</dd>
+        <dt>Текущая дата локально</dt>
+        <dd>{{ now_local|date:"d/m/Y H:i:s" }}</dd>
+        <dt>Текущая дата UTC</dt>
+        <dd>{{ now_utc|date:"d/m/Y H:i:s" }}</dd>
+    </dl>
+    <pre class="calendar">{{ text_calendar }}</pre>
+</section>
+{% endblock %}

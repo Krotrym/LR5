@@ -1,0 +1,27 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Врачи | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Врачи</h1>
+    <div class="grid cards">
+        {% for doctor in doctors %}
+            <article class="card person-card">
+                <img src="{{ doctor.photo_url }}" alt="{{ doctor.full_name }}">
+                <h2>{{ doctor.full_name }}</h2>
+                <p class="eyebrow">{{ doctor.category.name }} | {{ doctor.department.name }}</p>
+                <p>
+                    {% for specialization in doctor.specializations.all %}
+                        <span class="tag">{{ specialization.name }}</span>
+                    {% endfor %}
+                </p>
+                <p><a href="tel:{{ doctor.phone }}">{{ doctor.phone }}</a></p>
+                <p><a href="mailto:{{ doctor.email }}">{{ doctor.email }}</a></p>
+            </article>
+        {% empty %}
+            <p>Врачи пока не добавлены.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

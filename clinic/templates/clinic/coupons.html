@@ -1,0 +1,21 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Промокоды | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Промокоды и купоны</h1>
+    <div class="grid cards">
+        {% for code in codes %}
+            <article class="card coupon {% if not code.is_valid_now %}inactive{% endif %}">
+                <p class="code">{{ code.code }}</p>
+                <h2>{{ code.discount_percent }}%</h2>
+                <p>{{ code.description }}</p>
+                <p>Действует до {{ code.valid_until|date:"d/m/Y" }}</p>
+            </article>
+        {% empty %}
+            <p>Промокоды пока не добавлены.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

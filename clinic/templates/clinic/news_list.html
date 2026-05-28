@@ -1,0 +1,28 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Новости | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Новости</h1>
+    <div class="grid news-grid">
+        {% for article in news %}
+            <article class="card media-card">
+                <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                <div>
+                    <time>{{ article.published_at|date:"d/m/Y H:i" }}</time>
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.summary }}</p>
+                    <details>
+                        <summary>Читать далее</summary>
+                        <p>{{ article.content }}</p>
+                    </details>
+                    <small>Сохранено UTC: {{ article.created_at_utc|date:"d/m/Y H:i" }} | локально: {{ article.created_at_local|date:"d/m/Y H:i" }}</small>
+                </div>
+            </article>
+        {% empty %}
+            <p>Новостей пока нет.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

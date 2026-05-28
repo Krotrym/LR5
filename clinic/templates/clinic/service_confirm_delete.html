@@ -1,0 +1,15 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Удаление услуги | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section readable">
+    <h1>Удалить услугу</h1>
+    <p>Вы действительно хотите удалить услугу <strong>{{ service.name }}</strong>?</p>
+    <form method="post" class="actions">
+        {% csrf_token %}
+        <button class="button danger" type="submit">Удалить</button>
+        <a class="button" href="{% url 'service_detail' service.pk %}">Отмена</a>
+    </form>
+</section>
+{% endblock %}

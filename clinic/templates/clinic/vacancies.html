@@ -1,0 +1,20 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Вакансии | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>Вакансии</h1>
+    <div class="grid cards">
+        {% for vacancy in vacancies %}
+            <article class="card">
+                <h2>{{ vacancy.title }}</h2>
+                <p>{{ vacancy.description }}</p>
+                <p><strong>{{ vacancy.salary_from }} - {{ vacancy.salary_to }} BYN</strong></p>
+            </article>
+        {% empty %}
+            <p>Активных вакансий сейчас нет.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

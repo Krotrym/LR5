@@ -1,0 +1,27 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}О компании | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h1>О компании</h1>
+    <div class="timeline">
+        {% for fact in facts %}
+            <article class="row-card">
+                {% if fact.logo_url %}
+                    <img class="thumb" src="{{ fact.logo_url }}" alt="{{ fact.name }}">
+                {% endif %}
+                <div>
+                    <p class="eyebrow">{{ fact.history_year }}</p>
+                    <h2>{{ fact.name }}</h2>
+                    <p>{{ fact.description }}</p>
+                    <p><strong>Реквизиты:</strong> {{ fact.requisites }}</p>
+                    <small>UTC: {{ fact.created_at_utc|date:"d/m/Y H:i" }} | {{ server_timezone }}: {{ fact.created_at_local|date:"d/m/Y H:i" }}</small>
+                </div>
+            </article>
+        {% empty %}
+            <p>Информация о компании пока не заполнена.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

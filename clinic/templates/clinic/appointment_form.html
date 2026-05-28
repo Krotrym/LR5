@@ -1,0 +1,15 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Запись на прием | VetCare LR5{% endblock %}
+
+{% block content %}
+<section class="section form-section">
+    <h1>Запись на прием</h1>
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button primary" type="submit">Запланировать</button>
+        <a class="button" href="{% url 'appointments' %}">Отмена</a>
+    </form>
+</section>
+{% endblock %}
