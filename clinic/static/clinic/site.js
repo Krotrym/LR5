@@ -1,4 +1,4 @@
-function setupServiceFilter() {
+﻿function setupServiceFilter() {
     const grid = document.querySelector("#serviceGrid");
     const search = document.querySelector("#serviceSearch");
     const category = document.querySelector("#categoryFilter");
@@ -36,23 +36,45 @@ function setupBirthDateValidation() {
     if (!input) return;
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     input.max = today.toISOString().slice(0, 10);
 
-    form.addEventListener("submit", (event) => {
-        const value = input.value ? new Date(`${input.value}T00:00:00`) : null;
-        if (!value) return;
+    function parseDate(value) {
+        if (!value) return null;
+        const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (isoMatch) return new Date(Number(isoMatch[1]), Number(isoMatch[2]) - 1, Number(isoMatch[3]));
+        const ruMatch = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        if (ruMatch) return new Date(Number(ruMatch[3]), Number(ruMatch[2]) - 1, Number(ruMatch[1]));
+        return null;
+    }
 
-        let age = today.getFullYear() - value.getFullYear();
-        const monthDelta = today.getMonth() - value.getMonth();
-        if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < value.getDate())) age -= 1;
+    function getAge(date) {
+        let age = today.getFullYear() - date.getFullYear();
+        const monthDelta = today.getMonth() - date.getMonth();
+        if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < date.getDate())) age -= 1;
+        return age;
+    }
 
-        if (value > today || age < 14 || age > 120) {
+    function validateBirthDate(showMessage) {
+        input.setCustomValidity("");
+        const value = parseDate(input.value);
+        if (!value) return true;
+
+        const age = getAge(value);
+        const isInvalid = value > today || age < 14 || age > 120;
+        if (isInvalid) {
             input.setCustomValidity("Введите корректную дату рождения: возраст от 14 до 120 лет.");
-            input.reportValidity();
-            event.preventDefault();
-        } else {
-            input.setCustomValidity("");
+            if (showMessage) input.reportValidity();
+            return false;
         }
+        return true;
+    }
+
+    input.addEventListener("input", () => validateBirthDate(false));
+    input.addEventListener("change", () => validateBirthDate(false));
+
+    form.addEventListener("submit", (event) => {
+        if (!validateBirthDate(true)) event.preventDefault();
     });
 }
 
